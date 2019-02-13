@@ -1,6 +1,6 @@
 
-# Created by https://www.gitignore.io/api/c,c++,keil
-# Edit at https://www.gitignore.io/?templates=c,c++,keil
+# Created by https://www.gitignore.io/api/c,c++,keil,visualstudiocode
+# Edit at https://www.gitignore.io/?templates=c,c++,keil,visualstudiocode
 
 ### C ###
 # Prerequisites
@@ -39,7 +39,7 @@
 *.app
 *.i*86
 *.x86_64
-!*.hex
+*.hex
 
 # Debug files
 *.dSYM/
@@ -122,4 +122,15 @@ dkms.conf
 *.uvguix.*
 
 
-# End of https://www.gitignore.io/api/c,c++,keil
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
+# End of https://www.gitignore.io/api/c,c++,keil,visualstudiocode
