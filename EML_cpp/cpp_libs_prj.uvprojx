@@ -498,16 +498,6 @@
               <FilePath>.\EML\einterrupts.h</FilePath>
             </File>
             <File>
-              <FileName>einterrupts_private.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\EML\einterrupts_private.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>einterrupts_private.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\EML\einterrupts_private.h</FilePath>
-            </File>
-            <File>
               <FileName>etime.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\EML\etime.cpp</FilePath>
@@ -576,6 +566,12 @@
         </targetInfos>
       </component>
       <component Cclass="Drivers" Cgroup="RST_CLK" Cvendor="Keil" Cversion="1.5" condition="CON_MDR1986BXX">
+        <package name="MDR1986BExx" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="Keil" version="1.5"/>
+        <targetInfos>
+          <targetInfo name="Target 1"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Drivers" Cgroup="TIMER" Cvendor="Keil" Cversion="1.5" condition="CON_MDR1986BXX">
         <package name="MDR1986BExx" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="Keil" version="1.5"/>
         <targetInfos>
           <targetInfo name="Target 1"/>

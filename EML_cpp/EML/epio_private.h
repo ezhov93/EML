@@ -14,7 +14,7 @@
 
 typedef struct PinMap{ 
     MDR_PORT_TypeDef *port;
-    uint32 pin; 
+    int pin; 
 		int chAdc;
 		int chDac;
 } PinMap; 

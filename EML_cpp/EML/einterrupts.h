@@ -20,9 +20,9 @@ typedef enum Interrupt {
 } Interrupt;
 
 
-void attachInterrupt(Interrupt interrupt, func_ptr handler);
-void attachInterrupt(Interrupt interrupt, argFunc_ptr handler, void *arg);
-void detachInterrupt(uint8 pin);
+void attachInterrupt(int pin, Interrupt interrupt, func_ptr handler);
+void attachInterrupt(int pin, Interrupt interrupt, argFunc_ptr handler, void *arg);
+void detachInterrupt(int pin);
 void interrupts();
 void noInterrupts();
 

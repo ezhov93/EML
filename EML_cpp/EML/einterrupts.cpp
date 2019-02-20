@@ -5,10 +5,9 @@
  */
 
 #include "einterrupts.h"
-#include "einterrupts_private.h"
 #include "MDR32F9Qx_config.h"           // Keil::Device:Startup
 
-void attachInterrupt(uint8 pin, func_ptr handler, Interrupt interrupt) {
+void attachInterrupt(int pin, func_ptr handler, Interrupt interrupt) {
     if (!handler) return;
   /*  exti_attach_interrupt((exti_num)(PIN_MAP[pin].gpio_bit),
                           gpio_exti_port(PIN_MAP[pin].gpio_device),
@@ -16,7 +15,7 @@ void attachInterrupt(uint8 pin, func_ptr handler, Interrupt interrupt) {
                           outMode);*/
 }
 
-void attachInterrupt(uint8 pin, argFunc_ptr handler, void *arg,
+void attachInterrupt(int pin, argFunc_ptr handler, void *arg,
                      Interrupt interrupt) {
     if (!handler)	return;
    /* exti_attach_callback((exti_num)(PIN_MAP[pin].gpio_bit),
@@ -26,7 +25,7 @@ void attachInterrupt(uint8 pin, argFunc_ptr handler, void *arg,
                           outMode);*/
 }
 
-void detachInterrupt(uint8 pin) {
+void detachInterrupt(int pin) {
    /* exti_detach_interrupt((exti_num)(PIN_MAP[pin].gpio_bit));*/
 }
 

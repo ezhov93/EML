@@ -12,25 +12,26 @@
  
 class ETimer {
   private:
-    uint32 number = 0;
+    uint32 timerId;
+    void *timer_ptr;
+    func_ptr handler;
   
   public:
-    ETimer(uint8 number);
+    ETimer(uint8 timerId);
+    int interval() const;
+    bool isActive() const;
+    bool isSingleShot() const;
+    void setInterval(int msec);
+    void start();
+    void start(int msec);
     void pause(void);
     void resume(void);
-    uint32 getPrescaleFactor();
-    void setPrescaleFactor(uint32 factor);
-    uint16 getOverflow();
-    void setOverflow(uint16 val);
-    uint16 getCount(void);
-    void setCount(uint16 val);
-    uint16 setPeriod(uint32 microseconds);
-    void setMode(int channel, timer_mode mode);
-    uint16 getCompare(int channel);
-    void setCompare(int channel, uint16 compare);
-    void attachInterrupt(int channel, voidFuncPtr handler);
-    void detachInterrupt(int channel);
-    void refresh(void);    
-  }
+    void reset();
+    int remaningTime();
+    // void attachInterrupt(int channel, func_ptr handler);
+    // void detachInterrupt(int channel); 
+    void attachInterrupt(func_ptr handler);
+    void detachInterrupt();
+};
 
 #endif

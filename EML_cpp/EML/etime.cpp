@@ -5,8 +5,9 @@
  */
 
 #include "etime.h"
-#include "einterrupts_private.h"
 #include "MDR32F9Qx_config.h"           // Keil::Device:Startup
+
+static uint32 msec = 0;
 
 inline uint32 millis() {
 	return msec;
@@ -18,12 +19,27 @@ uint32 micros() {
   return (ms * 1000)+SysTick->VAL;
 }
 
-void delay(uint32 ms) {
+void delay(int ms) {
   uint32 time = millis()+ms;
   while(millis() != time);
 }
 
-void delayMicroseconds(uint32 us) {
+void delayMicroseconds(int us) {
   uint32 time = micros()+us;
   while(micros() != time);
 }
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
+void SysTick_Handler() {
+  ++msec;
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+
+  

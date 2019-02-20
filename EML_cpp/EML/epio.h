@@ -39,13 +39,13 @@ typedef enum Pin {
 }Pin;
 
 void pinMode(Pin pin, PinMode mode);
-void digitalWrite(Pin pin, uint32 value);
+void digitalWrite(Pin pin, int value);
 uint32 digitalRead(Pin pin);
 void togglePin(Pin pin);
 uint16 analogRead(Pin pin);
 // uint32 pulseIn( Pin pin,  PinState state, uint32 timeout_ms = 1000000L ) ;
-void analogWrite(Pin pin, uint32 value);
-void shiftOut(Pin data, Pin clock, uint8 bitOrder, uint8 value);
-uint32 shiftIn(Pin data, Pin clock, uint32 bitOrder);
+void analogWrite(Pin pin, int value);
+void shiftOut(Pin data, Pin clock, int bitOrder, int value);
+uint32 shiftIn(Pin data, Pin clock, int bitOrder);
 
 #endif // EPIO_H

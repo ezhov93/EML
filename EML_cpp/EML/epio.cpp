@@ -126,7 +126,7 @@ inline uint32 digitalRead(Pin pin) {
     return (uint32)PORT_ReadInputDataBit(pinMap[pin].port, pinMap[pin].pin);
 }
 
-inline void digitalWrite(Pin pin, uint32 val) {
+inline void digitalWrite(Pin pin, int val) {
     PORT_WriteBit(pinMap[pin].port, pinMap[pin].pin, (BitAction)val);
 }
 
@@ -142,7 +142,7 @@ uint16 analogRead(Pin pin) {
 	return ADC1_GetResult();
 }
 
-void analogWrite(Pin pin, uint32 val)
+void analogWrite(Pin pin, int val)
 {
 	if (pinMap[pin].chDac==1)
 		DAC1_SetData(val);
@@ -150,7 +150,7 @@ void analogWrite(Pin pin, uint32 val)
 		DAC2_SetData(val);
 }
 
-void shiftOut(Pin dataPin, Pin clockPin, uint8 bitOrder, uint8 value) {
+void shiftOut(Pin dataPin, Pin clockPin, int bitOrder, int value) {
     digitalWrite(clockPin, LOW);
     for (int i = 0; i < 8; i++) {
         int bit = bitOrder == LSBFIRST ? i : (7 - i);
@@ -160,7 +160,7 @@ void shiftOut(Pin dataPin, Pin clockPin, uint8 bitOrder, uint8 value) {
     }
 }
 
-uint32_t shiftIn(Pin dataPin, Pin clockPin, uint32 bitOrder )
+uint32_t shiftIn(Pin dataPin, Pin clockPin, int bitOrder )
 {
   uint8_t value = 0;
   for (int i=0 ; i < 8 ; ++i)  {

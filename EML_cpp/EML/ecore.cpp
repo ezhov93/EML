@@ -8,7 +8,7 @@
 #include "MDR32F9Qx_config.h" 
 #include "MDR32F9Qx_rst_clk.h" 
 
-void setCoreClock(uint32 mhz) {
+void setCoreClock(int mhz) {
   uint32 mull = (mhz * 1000000)/HSE_Value;
   RST_CLK_HSEconfig(RST_CLK_HSE_ON);
   if (RST_CLK_HSEstatus() == SUCCESS) {
