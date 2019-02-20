@@ -1,8 +1,9 @@
 /*
- * @file  main.cpp
+ * @file  esturtup.cpp
  * @author Mikhail Ezhov <ezhov93@gmail.com>
- * @brief  Main file.
+ * @brief  Startup file.
  */
+ 
 #include "MDR32F9Qx_port.h"
 #include "MDR32F9Qx_rst_clk.h" 
  
@@ -23,15 +24,17 @@
 	PORT_Init(MDR_PORTF, &PORT_InitStructure);
 
 	RST_CLK_PCLKcmd(ALL_PORTS_CLK, DISABLE);
-}
  }
+
+void disableAllInterupts()  {
+  SCB->AIRCR = 0x05FA0000 | ((uint32_t)0x500);
+  SCB->VTOR = 0x08000000;
+  NVIC->ICPR[0] = 0xFFFFFFFF;
+  NVIC->ICER[0] = 0xFFFFFFFF;
+}
  
 void systickSetup() {
 	SystemCoreClockUpdate();
 	SysTick_Config(SystemCoreClock/1000);
 }
 
-void rstclkSetup()
-{
-	
-}

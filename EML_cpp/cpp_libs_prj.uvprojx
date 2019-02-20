@@ -52,7 +52,7 @@
           <OutputName>cpp_libs_prj</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Listings\</ListingPath>
@@ -327,15 +327,15 @@
             <uC99>0</uC99>
             <uGnu>1</uGnu>
             <useXO>0</useXO>
-            <v6Lang>1</v6Lang>
-            <v6LangP>1</v6LangP>
+            <v6Lang>3</v6Lang>
+            <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>--cpp11</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
               <IncludePath>.\EML</IncludePath>
@@ -380,7 +380,7 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Source Group 1</GroupName>
+          <GroupName>src</GroupName>
           <Files>
             <File>
               <FileName>test.cpp</FileName>
@@ -390,7 +390,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>New Group</GroupName>
+          <GroupName>EML</GroupName>
           <Files>
             <File>
               <FileName>ebits.h</FileName>
@@ -448,11 +448,6 @@
               <FilePath>.\EML\etypes.h</FilePath>
             </File>
             <File>
-              <FileName>hooks.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\EML\hooks.c</FilePath>
-            </File>
-            <File>
               <FileName>itoa.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\EML\itoa.c</FilePath>
@@ -478,64 +473,59 @@
               <FilePath>.\EML\epio_private.h</FilePath>
             </File>
             <File>
-              <FileName>HardwareTimer.cpp</FileName>
+              <FileName>estartup.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\EML\HardwareTimer.cpp</FilePath>
+              <FilePath>.\EML\estartup.cpp</FilePath>
             </File>
             <File>
-              <FileName>HardwareTimer.h</FileName>
+              <FileName>estartup.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\EML\HardwareTimer.h</FilePath>
+              <FilePath>.\EML\estartup.h</FilePath>
             </File>
             <File>
-              <FileName>Print.cpp</FileName>
+              <FileName>ecore.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\EML\Print.cpp</FilePath>
+              <FilePath>.\EML\ecore.cpp</FilePath>
             </File>
             <File>
-              <FileName>Print.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\EML\Print.h</FilePath>
-            </File>
-            <File>
-              <FileName>serial.cpp</FileName>
+              <FileName>einterrupts.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\EML\serial.cpp</FilePath>
+              <FilePath>.\EML\einterrupts.cpp</FilePath>
             </File>
             <File>
-              <FileName>serial.h</FileName>
+              <FileName>einterrupts.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\EML\serial.h</FilePath>
+              <FilePath>.\EML\einterrupts.h</FilePath>
             </File>
             <File>
-              <FileName>Stream.cpp</FileName>
+              <FileName>einterrupts_private.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\EML\Stream.cpp</FilePath>
+              <FilePath>.\EML\einterrupts_private.cpp</FilePath>
             </File>
             <File>
-              <FileName>Stream.h</FileName>
+              <FileName>einterrupts_private.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\EML\Stream.h</FilePath>
+              <FilePath>.\EML\einterrupts_private.h</FilePath>
             </File>
             <File>
-              <FileName>time.cpp</FileName>
+              <FileName>etime.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\EML\time.cpp</FilePath>
+              <FilePath>.\EML\etime.cpp</FilePath>
             </File>
             <File>
-              <FileName>time.h</FileName>
+              <FileName>etime.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\EML\time.h</FilePath>
+              <FilePath>.\EML\etime.h</FilePath>
             </File>
             <File>
-              <FileName>WString.cpp</FileName>
+              <FileName>etimer.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\EML\WString.cpp</FilePath>
+              <FilePath>.\EML\etimer.cpp</FilePath>
             </File>
             <File>
-              <FileName>WString.h</FileName>
+              <FileName>etimer.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\EML\WString.h</FilePath>
+              <FilePath>.\EML\etimer.h</FilePath>
             </File>
           </Files>
         </Group>

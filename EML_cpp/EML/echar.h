@@ -11,7 +11,6 @@
 extern "C" {
 #endif
 
-// echar.h prototypes
 bool isAlphaNumeric(int c);
 bool isAlpha(int c) __attribute__((always_inline));
 bool isAscii(int c) __attribute__((always_inline));

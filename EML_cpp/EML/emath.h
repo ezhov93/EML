@@ -27,12 +27,6 @@
 #define degrees(rad)            ((rad)*RAD_TO_DEG)
 #define sq(x)                   ((x)*(x))
 
-/* undefine stdlib's abs if encountered */
-/*#ifdef abs
-#undef abs
-#endif
-#define abs(x) (((x) > 0) ? (x) : -(x))*/
-
 /**
  * @brief Initialize the pseudo-random number generator.
  * @param seed the number used to initialize the seed; cannot be zero.
@@ -83,48 +77,8 @@ long random(long min, long max);
          toStart;
  }
 
-/**
- * Compute the cosine of an angle, in radians.
- * @param x The radian measure of the angle.
- * @return The cosine of x.  This value will be between -1 and 1.
- */
-double cos(double x);
-
-/**
- * Compute the sine of an angle, in radians.
- * @param x The radian measure of the angle.
- * @return The sine of x.  This value will be between -1 and 1.
- */
-double sin(double x);
-
-/**
- * Compute the tangent of an angle, in radians.
- * @param x The radian measure of the angle.
- * @return The tangent of x.  There are no limits on the return value
- * of this function.
- */
-double tan(double x);
-
-/**
- * Compute the square root of a number.
- * @param x The number whose square root to find.  This value cannot
- * be negative.
- * @return The square root of x.  The return value is never negative.
- */
-double sqrt(double x);
-
-/**
- * Compute an exponentiation.
- * @param x the base. This value cannot be zero if y <= 0.  This value
- * cannot be negative if y is not an integral value.
- * @param y the exponent.
- * @return x raised to the power y.
- */
-double pow(double x, double y);
-
 extern uint16 makeWord( uint16 w ) ;
 extern uint16 makeWord( uint8 h, uint8 l ) ;
-
 #define word(...) makeWord(__VA_ARGS__)
 
 #endif // EMATH_H

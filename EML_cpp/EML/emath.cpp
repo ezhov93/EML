@@ -33,23 +33,3 @@ extern uint16 makeWord( uint8 h, uint8 l )	{
   return (h << 8) | l ;
 }
 
-inline double cos(double x) {
-	return cos(x);
-}
-
-inline double sin(double x) {
-	return sin(x);
-}
-
-inline double tan(double x) {
-	return tan(x);
-}
-
-inline double sqrt(double x) {
-	return sqrt(x);
-}
-
-inline double pow(double x, double y) {
-	return pow(x,y);
-}
-

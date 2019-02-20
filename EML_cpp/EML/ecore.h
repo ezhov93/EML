@@ -14,6 +14,8 @@
 #include "epio.h"
 #include "echar.h"
 #include "emath.h"
+//#include <cmath>
+#include "etime.h"
 // #include "itoa.h"
 
 /* eCore macros*/
@@ -30,15 +32,20 @@
 #define _BV(bit) (1 << (bit))
 #endif 
 
+/*
 #define clockCyclesPerMicrosecond() ( SystemCoreClock / 1000000L )
 #define clockCyclesToMicroseconds(a) ( ((a) * 1000L) / (SystemCoreClock / 1000L) )
 #define microsecondsToClockCycles(a) ( (a) * (SystemCoreClock / 1000000L) )
+*/
 
 #define digitalPinToInterrupt(pin) (pin)
 
 /* eCore main state functions */
 void setup();
 void loop();
+
+void setCoreClock(uint32 mhz);
+uint32 coreClock();
 
 #endif // ECORE_H
 

@@ -1,27 +1,13 @@
-#include "HardwareTimer.h"
-
-#include <libmaple/rcc.h>
-#include "ext_interrupts.h" // for noInterrupts(), interrupts()
-#include "wirish_math.h"
-#include <board/board.h>           // for CYCLES_PER_MICROSECOND
-#include <libmaple/dma.h>
-
-
-extern "C" {
-    static timer_dev **this_devp;
-    static rcc_clk_id this_id;
-    static void set_this_dev(timer_dev *dev) {
-        if (dev->clk_id == this_id) {
-            *this_devp = dev;
-        }
-    }
-}
-
 /*
- * HardwareTimer routines
+ * @file   etimer.cpp
+ * @author Mikhail Ezhov <ezhov93@gmail.com>
+ * @brief  Timer file.
  */
+ 
+#include "etimer.h"
+#include "einterrupts.h" // for noInterrupts(), interrupts()
 
-HardwareTimer::HardwareTimer(uint8 timerNum) {
+ETimer::ETimer(uint8 number) {
     rcc_clk_id timerID = (rcc_clk_id)(RCC_TIMER1 + (timerNum - 1));
     this->dev = NULL;
     noInterrupts(); // Hack to ensure we're the only ones using
@@ -33,41 +19,41 @@ HardwareTimer::HardwareTimer(uint8 timerNum) {
     ASSERT(this->dev != NULL);
 }
 
-void HardwareTimer::pause(void) {
+void ETimer::pause(void) {
     timer_pause(this->dev);
 }
 
-void HardwareTimer::resume(void) {
+void ETimer::resume(void) {
     timer_resume(this->dev);
 }
 
-uint32 HardwareTimer::getPrescaleFactor(void) {
+uint32 ETimer::getPrescaleFactor(void) {
     return timer_get_prescaler(this->dev) + 1;
 }
 
-void HardwareTimer::setPrescaleFactor(uint32 factor) {
+void ETimer::setPrescaleFactor(uint32 factor) {
     timer_set_prescaler(this->dev, (uint16)(factor - 1));
 }
 
-uint16 HardwareTimer::getOverflow() {
+uint16 ETimer::getOverflow() {
     return timer_get_reload(this->dev);
 }
 
-void HardwareTimer::setOverflow(uint16 val) {
+void ETimer::setOverflow(uint16 val) {
     timer_set_reload(this->dev, val);
 }
 
-uint16 HardwareTimer::getCount(void) {
+uint16 ETimer::getCount(void) {
     return timer_get_count(this->dev);
 }
 
-void HardwareTimer::setCount(uint16 val) {
+void ETimer::setCount(uint16 val) {
     uint16 ovf = this->getOverflow();
     timer_set_count(this->dev, min(val, ovf));
 }
 
 #define MAX_RELOAD ((1 << 16) - 1)
-uint16 HardwareTimer::setPeriod(uint32 microseconds) {
+uint16 ETimer::setPeriod(uint32 microseconds) {
     // Not the best way to handle this edge case?
     if (!microseconds) {
         this->setPrescaleFactor(1);
@@ -83,54 +69,40 @@ uint16 HardwareTimer::setPeriod(uint32 microseconds) {
     return overflow;
 }
 
-void HardwareTimer::setMode(int channel, timer_mode mode) {
+void ETimer::setMode(int channel, timer_mode mode) {
     timer_set_mode(this->dev, (uint8)channel, (timer_mode)mode);
 }
 
-uint16 HardwareTimer::getCompare(int channel) {
+uint16 ETimer::getCompare(int channel) {
     return timer_get_compare(this->dev, (uint8)channel);
 }
 
-void HardwareTimer::setCompare(int channel, uint16 val) {
+void ETimer::setCompare(int channel, uint16 val) {
     uint16 ovf = this->getOverflow();
     timer_set_compare(this->dev, (uint8)channel, min(val, ovf));
 }
 
-void HardwareTimer::attachInterrupt(int channel, voidFuncPtr handler) {
+void ETimer::attachInterrupt(int channel, voidFuncPtr handler) {
     timer_attach_interrupt(this->dev, (uint8)channel, handler);
 }
 
-void HardwareTimer::detachInterrupt(int channel) {
+void ETimer::detachInterrupt(int channel) {
     timer_detach_interrupt(this->dev, (uint8)channel);
 }
 
-void HardwareTimer::enableDMA(int channel) {
+void ETimer::enableDMA(int channel) {
     timer_dma_enable_req(this->dev, (uint8)channel);
 }
 
-void HardwareTimer::disableDMA(int channel) {
+void ETimer::disableDMA(int channel) {
     timer_dma_disable_req(this->dev, (uint8)channel);
 }
 
-void HardwareTimer::refresh(void) {
+void ETimer::refresh(void) {
     timer_generate_update(this->dev);
 }
 
-void HardwareTimer::setMasterModeTrGo(uint32_t mode) {
+void ETimer::setMasterModeTrGo(uint32_t mode) {
 	this->dev->regs.bas->CR2 &= ~TIMER_CR2_MMS;
 	this->dev->regs.bas->CR2 |= mode;
 }
-
-    
-/* -- Deprecated predefined instances -------------------------------------- */
-
-HardwareTimer Timer1(1);
-HardwareTimer Timer2(2);
-HardwareTimer Timer3(3);
-HardwareTimer Timer4(4);
-#ifdef STM32_HIGH_DENSITY
-HardwareTimer Timer5(5);
-HardwareTimer Timer6(6);
-HardwareTimer Timer7(7);
-HardwareTimer Timer8(8);
-#endif
