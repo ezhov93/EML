@@ -517,6 +517,36 @@
               <FileType>5</FileType>
               <FilePath>.\EML\etimer.h</FilePath>
             </File>
+            <File>
+              <FileName>eprint.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\EML\eprint.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>eprint.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EML\eprint.h</FilePath>
+            </File>
+            <File>
+              <FileName>eserial.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\EML\eserial.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>eserial.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EML\eserial.h</FilePath>
+            </File>
+            <File>
+              <FileName>estream.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\EML\estream.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>estream.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EML\estream.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

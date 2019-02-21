@@ -44,8 +44,8 @@
 void setup();
 void loop();
 
-void setCoreClock(uint32 mhz);
-uint32 coreClock();
+void setCoreClock(float mhz);
+float coreClock();
 
 #endif // ECORE_H
 

@@ -12,22 +12,30 @@
  
 class ETimer {
   private:
-    uint32 timerId;
-    void *timer_ptr;
-    func_ptr handler;
+    int _timerId;
+    void *_timer_ptr;
+    func_ptr _handler;
+    int _interval;
+    bool _singleShot;
+    int _irq;
+    int _div;
+    int _rate;    
   
   public:
-    ETimer(uint8 timerId);
+    enum Type { MSEC = 1000, USEC = MSEC*1000} _type;
+    ETimer(int timerId, Type type);
+    Type type() const;
+    void setType(Type type);
     int interval() const;
     bool isActive() const;
     bool isSingleShot() const;
+    void setSingleShot(bool singleShot);
     void setInterval(int msec);
     void start();
     void start(int msec);
     void pause(void);
     void resume(void);
-    void reset();
-    int remaningTime();
+    int remaningTime() const;
     // void attachInterrupt(int channel, func_ptr handler);
     // void detachInterrupt(int channel); 
     void attachInterrupt(func_ptr handler);

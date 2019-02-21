@@ -1,13 +1,12 @@
 /*
- * @file   bit_constans.h
+ * @file   eserial.h
  * @author Mikhail Ezhov <ezhov93@gmail.com>
- * @brief  Sserial port implementation.
+ * @brief  Serial port implementation.
  */
 
+#include "eserial.h"
 
-#include "serial.h"
-
-HardwareSerial::HardwareSerial(usart_dev *usart_device,
+ESerial::ESerial(usart_dev *usart_device,
                                uint8 tx_pin,
                                uint8 rx_pin) {
     this->usart_device = usart_device;
@@ -15,8 +14,7 @@ HardwareSerial::HardwareSerial(usart_dev *usart_device,
     this->rx_pin = rx_pin;
 }
 
-void HardwareSerial::begin(uint32 baud) 
-{
+void ESerial::begin(uint32 baud) {
 	begin(baud,SERIAL_8N1);
 }
 /*
@@ -26,10 +24,7 @@ void HardwareSerial::begin(uint32 baud)
  *
 */
 
-void HardwareSerial::begin(uint32 baud, uint8_t config) 
-{
- //   ASSERT(baud <= this->usart_device->max_baud);// Roger Clark. Assert doesn't do anything useful, we may as well save the space in flash and ram etc
-
+void ESerial::begin(uint32 baud, uint8_t config) {
     if (baud > this->usart_device->max_baud) {
         return;
     }
@@ -48,7 +43,7 @@ void HardwareSerial::begin(uint32 baud, uint8_t config)
     usart_enable(this->usart_device);
 }
 
-void HardwareSerial::end(void) {
+void ESerial::end(void) {
     usart_disable(this->usart_device);
 }
 
@@ -56,7 +51,7 @@ void HardwareSerial::end(void) {
  * I/O
  */
 
-int HardwareSerial::read(void) {
+int ESerial::read(void) {
 	if(usart_data_available(usart_device) > 0) {
 		return usart_getc(usart_device);
 	} else {
@@ -64,30 +59,27 @@ int HardwareSerial::read(void) {
 	}
 }
 
-int HardwareSerial::available(void) {
+int ESerial::available(void) {
     return usart_data_available(this->usart_device);
 }
 
 /* Roger Clark. Added function missing from LibMaple code */
 
-int HardwareSerial::peek(void)
-{
+int ESerial::peek(void) {
     return usart_peek(this->usart_device);
 }
 
-int HardwareSerial::availableForWrite(void)
-{
+int ESerial::availableForWrite(void) {
     return this->usart_device->wb->size-rb_full_count(this->usart_device->wb);
 }
 
-size_t HardwareSerial::write(unsigned char ch) {
-
-    usart_putc(this->usart_device, ch);
+size_t ESerial::write(unsigned char ch) {
+  usart_putc(this->usart_device, ch);
 	return 1;
 }
 
 /* edogaldo: Waits for the transmission of outgoing serial data to complete (Arduino 1.0 api specs) */
-void HardwareSerial::flush(void) {
+void ESerial::flush(void) {
     while(!rb_is_empty(this->usart_device->wb)); // wait for TX buffer empty
     while(!((this->usart_device->regs->SR) & (1<<USART_SR_TC_BIT))); // wait for TC (Transmission Complete) flag set 
 }

@@ -8,8 +8,9 @@
 #include "MDR32F9Qx_config.h" 
 #include "MDR32F9Qx_rst_clk.h" 
 
-void setCoreClock(int mhz) {
+void setCoreClock(float mhz) {
   uint32 mull = (mhz * 1000000)/HSE_Value;
+   RST_CLK_PCLKcmd(RST_CLK_PCLK_RST_CLK ,ENABLE);
   RST_CLK_HSEconfig(RST_CLK_HSE_ON);
   if (RST_CLK_HSEstatus() == SUCCESS) {
     RST_CLK_CPU_PLLconfig(RST_CLK_CPU_PLLsrcHSEdiv1, mull);
@@ -24,7 +25,7 @@ void setCoreClock(int mhz) {
 	SysTick_Config(SystemCoreClock/1000);
 }	
 
-inline uint32 coreClock() {
-  return SystemCoreClock;
+inline float coreClock() {
+  return SystemCoreClock/1e6f;
 }
 
