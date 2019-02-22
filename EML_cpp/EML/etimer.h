@@ -8,31 +8,20 @@
 #define ETIMER_H_
 
 #include "etypes.h"
-
  
 class ETimer {
-  private:
-    int _timerId;
-    void *_timer_ptr;
-    func_ptr _handler;
-    int _interval;
-    bool _singleShot;
-    int _irq;
-    int _div;
-    int _rate;    
-  
   public:
-    enum Type { MSEC = 1000, USEC = MSEC*1000} _type;
-    ETimer(int timerId, Type type);
+    enum Type { MS = 1000, US = MS*1000};
+    ETimer(int timerId, Type type = MS);
     Type type() const;
     void setType(Type type);
     int interval() const;
     bool isActive() const;
     bool isSingleShot() const;
-    void setSingleShot(bool singleShot);
-    void setInterval(int msec);
+    void setSingleShot(bool singleShot = false);
+    void setInterval(int time);
     void start();
-    void start(int msec);
+    void start(int time);
     void pause(void);
     void resume(void);
     int remaningTime() const;
@@ -40,6 +29,17 @@ class ETimer {
     // void detachInterrupt(int channel); 
     void attachInterrupt(func_ptr handler);
     void detachInterrupt();
+
+  private:
+    int _timerId;
+    void *_timer_ptr;
+    func_ptr _handler;
+    Type _type;
+    __IO uint32 *_interval;
+    bool _singleShot;
+    int _irq;
+    int _div;
+    int _rate;    
 };
 
 #endif

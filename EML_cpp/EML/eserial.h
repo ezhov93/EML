@@ -7,80 +7,86 @@
 #ifndef ESERIAL_H
 #define ESERIAL_H
 
+#include "etypes.h"
 #include "eprint.h"
 #include "estream.h"
+#include "epio.h"
 
-#if !(defined(SERIAL_TX_BUFFER_SIZE) && defined(SERIAL_RX_BUFFER_SIZE))
-#if (RAMEND < 1000)
-#define SERIAL_TX_BUFFER_SIZE 16
-#define SERIAL_RX_BUFFER_SIZE 16
-#else
-#define SERIAL_TX_BUFFER_SIZE 64
-#define SERIAL_RX_BUFFER_SIZE 64
+#ifdef __cplusplus
+extern "C" {
 #endif
+  
+#define ESERIAL_DATA_SIZE 64 
+  
+#ifdef __cplusplus
+}
 #endif
-#if (SERIAL_TX_BUFFER_SIZE>256)
-typedef uint16_t tx_buffer_index_t;
-#else
-typedef uint8_t tx_buffer_index_t;
-#endif
-#if  (SERIAL_RX_BUFFER_SIZE>256)
-typedef uint16_t rx_buffer_index_t;
-#else
-typedef uint8_t rx_buffer_index_t;
-#endif
- 
-struct usart_dev;
 
-#define SERIAL_8N1	0B00000000
-#define SERIAL_8N2	0B00100000
-#define SERIAL_9N1	0B00001000
-#define SERIAL_9N2	0B00101000	
 
-#define SERIAL_8E1	0B00001010
-#define SERIAL_8E2	0B00101010
-/* not supported:
-#define SERIAL_9E1	0B00001010
-#define SERIAL_9E2	0B00101010
-*/
-#define SERIAL_8O1	0B00001011
-#define SERIAL_8O2	0B00101011
-/* not supported:
-#define SERIAL_9O1	0B00001011
-#define SERIAL_9O2	0B00101011
-*/
-
-class ESerial: public Stream {
-
+// class ESerial: public Stream {
+class ESerial {
 public:
-    ESerial(struct usart_dev *usart_device,
-                   uint8 tx_pin,
-                   uint8 rx_pin);
+  enum DataBits { 
+    Data5 = 0x00,
+    Data6 = 0x20,
+    Data7 = 0x40,
+    Data8 = 0x60
+  };
+  enum Parity { 
+    NoParity = 0x00,
+    EvenParity = 0x06,
+    OddParity = 0x02,
+    MarkParity = 0x82,
+    SpaceParity = 0x86
+  };
+  enum StopBits {
+    OneStop = 0x00,
+    TwoStop = 0x08
+  };
+  enum Event { TransmittedData, ReceivedData };
 
-    void begin(uint32 baud);
-    void begin(uint32 baud,uint8_t config);
-    void end();
-    virtual int available(void);
-    virtual int peek(void);
-    virtual int read(void);
-    int availableForWrite(void);
-    virtual void flush(void);
-    virtual size_t write(uint8_t);
-    inline size_t write(unsigned long n) { return write((uint8_t)n); }
-    inline size_t write(long n) { return write((uint8_t)n); }
-    inline size_t write(unsigned int n) { return write((uint8_t)n); }
-    inline size_t write(int n) { return write((uint8_t)n); }
-    using Print::write;
-
-    int txPin(void) { return this->tx_pin; }
-    int rxPin(void) { return this->rx_pin; }
-	
-	operator bool() { return true; }
-
-    struct usart_dev* c_dev(void) { return this->usart_device; }
+  ESerial(int uart, Pin tx, Pin rx);
+  void begin();
+  void begin(uint32 baudrate);
+  void end();
+  void setBaudRate(int baudrate);
+  int baudrate() const;
+  void setDataBits (DataBits dataBits);
+  void setParity (Parity patity);
+  void setEvent (Event event);
+  void setStopBits (StopBits stopBits);
+  DataBits dataBits() const;
+  Parity parity() const;
+  StopBits stopBits() const;
+  virtual int available(void);
+  virtual int peek(void);
+  virtual byte read(void);
+  int availableForWrite(void);
+  virtual void flush(void);
+  virtual void write(byte);
+  // using Print::write;
+  void attachInterrupt(Event event, func_ptr handler);
+  void detachInterrupt(Event event);
+    
 private:
-    struct usart_dev *usart_device;
-    uint8 tx_pin;
-    uint8 rx_pin;
+  int _serialId;
+  void *_serial_ptr;
+  int _irq;
+  Pin _txPin;
+  Pin _rxPin;
+  uint32 _baudRate;
+  DataBits _dataBits;
+  Parity _parity;
+  StopBits _stopBits;
+  int dataRwCnt;
+  int dataTxCnt;
+  int dataTxSize;
+  int dataRxSize;
+  #pragma pack(push,1)
+  byte dataRx[ESERIAL_DATA_SIZE];
+  byte dataTx[ESERIAL_DATA_SIZE];
+  #pragma pack(pop)
 };
+
+#endif // ESERIAL_H
 

@@ -9,11 +9,13 @@
 extern void setup(void);
 extern void loop(void);
 
-int main(void) {
-  disableAllInterupts();
-  disableAllPorts();
-  systickSetup();	
-  
+static __attribute__(( constructor (101))) void premain() {
+   disableAllInterupts();
+   disableAllPorts();
+   systickSetup();	
+}
+
+int main(void) {  
 	setup();
 	while (1)
 		loop();

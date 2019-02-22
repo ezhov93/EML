@@ -64,20 +64,7 @@ static inline void setupDac(Pin pin) {
 void pinMode(Pin pin, PinMode mode) {
 	PORT_InitTypeDef conf;
 	PORT_StructInit(&conf);
-	
-	if (pinMap[pin].port == MDR_PORTA)
-		RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTA, ENABLE);
-	else if (pinMap[pin].port == MDR_PORTB)
-		RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTB, ENABLE);
-	else if (pinMap[pin].port == MDR_PORTC)
-		RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTC, ENABLE);
-	else if (pinMap[pin].port == MDR_PORTD)
-		RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTD, ENABLE);
-	else if (pinMap[pin].port == MDR_PORTE)
-		RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTE, ENABLE);
-	else
-		RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTF, ENABLE);
-				
+	RST_CLK_PCLKcmd(pinMap[pin].rstClk, ENABLE);
 	conf.PORT_Pin = pinMap[pin].pin;
 		
 	switch (mode) {

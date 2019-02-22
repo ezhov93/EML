@@ -1,27 +1,18 @@
+/*
+ * @file  eprint.h
+ * @author Mikhail Ezhov <ezhov93@gmail.com>
+ * @brief  Base class that provides print() and println().
+ */
 
-#include "Print.h"
+
+#include "eprint.h"
 
 #include "wirish_math.h"
 #include "limits.h"
 
 #ifndef LLONG_MAX
-/*
- * Note:
- *
- * At time of writing (12 April 2011), the limits.h that came with the
- * newlib we distributed didn't include LLONG_MAX.  Because we're
- * staying away from using templates (see /notes/coding_standard.rst,
- * "Language Features and Compiler Extensions"), this value was
- * copy-pasted from a println() of the value
- *
- *     std::numeric_limits<long long>::max().
- */
 #define LLONG_MAX 9223372036854775807LL
 #endif
-
-/*
- * Public methods
- */
 
 size_t Print::write(const char *str) {
     if (str == NULL) return 0;
@@ -185,25 +176,6 @@ size_t Print::println(const Printable& x)
   return n;
 }
 
-#ifdef SUPPORTS_PRINTF
-#include <stdio.h>
-#include <stdarg.h>
-// Work in progress to support printf.
-// Need to implement stream FILE to write individual chars to chosen serial port
-int Print::printf (__const char *__restrict __format, ...)
- {
-FILE *__restrict __stream;
-     int ret_status = 0;
-
-
-     va_list args;
-     va_start(args,__format);
-     ret_status = vfprintf(__stream, __format, args);
-     va_end(args);
-     return ret_status;
- }
- #endif
-
 /*
  * Private methods
  */
@@ -238,16 +210,7 @@ size_t Print::printNumber(unsigned long long n, uint8 base) {
  * This slightly smaller value was picked semi-arbitrarily. */
 #define LARGE_DOUBLE_TRESHOLD (9.1e18)
 
-/* THIS FUNCTION SHOULDN'T BE USED IF YOU NEED ACCURATE RESULTS.
- *
- * This implementation is meant to be simple and not occupy too much
- * code size.  However, printing floating point values accurately is a
- * subtle task, best left to a well-tested library function.
- *
- * See Steele and White 2003 for more details:
- *
- * http://kurtstephens.com/files/p372-steele.pdf
- */
+/* THIS FUNCTION SHOULDN'T BE USED IF YOU NEED ACCURATE RESULTS. */
 size_t Print::printFloat(double number, uint8 digits) {
 size_t s=0;
     // Hackish fail-fast behavior for large-magnitude doubles

@@ -518,16 +518,6 @@
               <FilePath>.\EML\etimer.h</FilePath>
             </File>
             <File>
-              <FileName>eprint.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\EML\eprint.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>eprint.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\EML\eprint.h</FilePath>
-            </File>
-            <File>
               <FileName>eserial.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\EML\eserial.cpp</FilePath>
@@ -538,14 +528,14 @@
               <FilePath>.\EML\eserial.h</FilePath>
             </File>
             <File>
-              <FileName>estream.cpp</FileName>
+              <FileName>eringbuffer.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>.\EML\estream.cpp</FilePath>
+              <FilePath>.\EML\eringbuffer.cpp</FilePath>
             </File>
             <File>
-              <FileName>estream.h</FileName>
+              <FileName>eringbuffer.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\EML\estream.h</FilePath>
+              <FilePath>.\EML\eringbuffer.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -602,6 +592,12 @@
         </targetInfos>
       </component>
       <component Cclass="Drivers" Cgroup="TIMER" Cvendor="Keil" Cversion="1.5" condition="CON_MDR1986BXX">
+        <package name="MDR1986BExx" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="Keil" version="1.5"/>
+        <targetInfos>
+          <targetInfo name="Target 1"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Drivers" Cgroup="UART" Cvendor="Keil" Cversion="1.5" condition="CON_MDR1986BXX">
         <package name="MDR1986BExx" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="Keil" version="1.5"/>
         <targetInfos>
           <targetInfo name="Target 1"/>

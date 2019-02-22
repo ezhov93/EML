@@ -1,44 +1,27 @@
 /*
- * Print.h - Base class that provides print() and println()
- * Copyright (c) 2008 David A. Mellis.  All right reserved.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * Modified 12 April 2011 by Marti Bolivar <mbolivar@leaflabs.com>
+ * @file  eprint.cpp
+ * @author Mikhail Ezhov <ezhov93@gmail.com>
+ * @brief  Base class that provides print() and println().
  */
 
-#ifndef _WIRISH_PRINT_H_
-#define _WIRISH_PRINT_H_
+#ifndef EPRINT_H_
+#define EPRINT_H_
 
-#include <libmaple/libmaple_types.h>
-#include "WString.h"
-#include "Printable.h"
+#include "estring.h"
+#include "eprintable.h"
 
-enum {
+class Print {
+public:
+  enum {
     BIN  = 2,
     OCT  = 8,
     DEC  = 10,
     HEX  = 16
-};
-
-class Print {
-public:
-    virtual size_t write(uint8 ch) = 0;
-    virtual size_t write(const char *str);
-    virtual size_t write(const void *buf, uint32 len);
+  };
+  
+  virtual size_t write(uint8 ch) = 0;
+  virtual size_t write(const char *str);
+  virtual size_t write(const void *buf, uint32 len);
 	
 	size_t print(const String &);
     size_t print(char);
@@ -52,7 +35,7 @@ public:
     size_t print(unsigned long long, int=DEC);
     size_t print(double, int=2);
     size_t print(const __FlashStringHelper *);
-    size_t print(const Printable&);
+    size_t print(const EPrintable&);
     size_t println(void);
 	size_t println(const String &s);
 	size_t println(char);
@@ -66,11 +49,8 @@ public:
     size_t println(unsigned long long, int=DEC);
     size_t println(double, int=2);
     size_t println(const __FlashStringHelper *);
-    size_t println(const Printable&);
-#ifdef SUPPORTS_PRINTF
-// Roger Clark. Work in progress to add printf support
-	int printf(const char * format, ...);
-#endif
+    size_t println(const EPrintable&);
+
     Print() : write_error(0) {}
 
     int getWriteError() { return write_error; }

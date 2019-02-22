@@ -3,7 +3,7 @@
 #define Stream_h
 
 #include <inttypes.h>
-#include "Print.h"
+#include "eprint.h"
 
 
 class Stream : public Print

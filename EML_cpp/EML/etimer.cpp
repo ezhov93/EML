@@ -19,9 +19,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  
-static func_ptr handlers_ptr[SIZE];
-static bool singleShots[SIZE];
+
+#if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
+static const int irq[SIZE] = {Timer1_IRQn, Timer2_IRQn, Timer3_IRQn , Timer4_IRQn};
+#else
+static const int irq[SIZE] = {Timer1_IRQn, Timer2_IRQn, Timer3_IRQn};
+#endif
+
+static func_ptr handlers_ptr[SIZE] = {};
+static bool singleShots[SIZE] = {};
 
 #ifdef __cplusplus
 }
@@ -59,14 +65,16 @@ ETimer::ETimer(int timerId, Type type): _timerId(timerId), _type(type) {
       _timer_ptr = nullptr;
       return;
   }
+  MDR_TIMER_TypeDef* timer = (MDR_TIMER_TypeDef*)_timer_ptr;
+  
+  _interval = &timer->ARR;
+  *_interval = 1000;
   _singleShot = false;
   _div = TIMER_HCLKdiv8;
   _rate = 1;
   /* pow(2,div) */
   for(int rate=0; rate<_div; ++rate)
     _rate*=2;
-  
-  MDR_TIMER_TypeDef* timer = (MDR_TIMER_TypeDef*)_timer_ptr;
   
   TIMER_CntInitTypeDef timerInit;
   TIMER_DeInit(timer);
@@ -86,9 +94,8 @@ ETimer::ETimer(int timerId, Type type): _timerId(timerId), _type(type) {
   TIMER_BRGInit(timer,_div);  
 }
 
-int ETimer::interval() const {
-  MDR_TIMER_TypeDef *timer = (MDR_TIMER_TypeDef*)_timer_ptr;
-  return timer->ARR&0xFFFF;
+inline int ETimer::interval() const {
+  return *_interval;
 }
 
 bool ETimer::isActive() const {
@@ -104,20 +111,20 @@ void ETimer::setSingleShot(bool singleShot) {
   _singleShot = singleShots[_timerId-1] = singleShot;
 }
 
-void ETimer::setInterval(int msec) {
+void ETimer::setInterval(int time) {
   MDR_TIMER_TypeDef* timer = (MDR_TIMER_TypeDef*)_timer_ptr;
+  *_interval = time;
   TIMER_SetCounter(timer, 0);
-  TIMER_SetCntAutoreload(timer, msec);
+  TIMER_SetCntAutoreload(timer, time);
 }
 
 void ETimer::start() {
-  start(_interval);
+  start(*_interval);
 }
 
-void ETimer::start(int msec) {
+void ETimer::start(int time) {
   MDR_TIMER_TypeDef* timer = (MDR_TIMER_TypeDef*)_timer_ptr;
-  TIMER_SetCounter(timer, 0);
-  TIMER_SetCntAutoreload(timer, msec);
+  setInterval(time);
   TIMER_SetCntPrescaler(timer, SystemCoreClock/(_type*_rate)-1);
   TIMER_Cmd(timer, ENABLE);
 }
@@ -134,7 +141,7 @@ inline void ETimer::resume(void) {
 
 int ETimer::remaningTime() const{
   MDR_TIMER_TypeDef* timer = (MDR_TIMER_TypeDef*)_timer_ptr;
-  return _interval - timer->CNT;
+  return *_interval - timer->CNT;
 }
 // void attachInterrupt(int channel, func_ptr handler);
 // void detachInterrupt(int channel); 
@@ -159,7 +166,8 @@ void ETimer::detachInterrupt() {
 extern "C" {
 #endif
 
-void Handler(MDR_TIMER_TypeDef* base, int id) {
+static void Handler(MDR_TIMER_TypeDef* base, int id) {
+  NVIC_DisableIRQ((IRQn_Type)irq[id-1]);
   TIMER_ClearITPendingBit(base, TIMER_STATUS_CNT_ARR);
   TIMER_ClearFlag(base, TIMER_STATUS_CNT_ARR);
   if (handlers_ptr[id-1]!= null) {
@@ -167,6 +175,7 @@ void Handler(MDR_TIMER_TypeDef* base, int id) {
     if (singleShots[id -1])
         TIMER_Cmd(base, DISABLE); 
   }
+  NVIC_EnableIRQ((IRQn_Type)irq[id-1]);
 }
   
 void Timer1_IRQHandler() {
