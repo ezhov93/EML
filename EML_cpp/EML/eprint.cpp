@@ -4,22 +4,22 @@
  * @brief  Base class that provides print() and println().
  */
 
-
+#include "etypes.h"
 #include "eprint.h"
-
-#include "wirish_math.h"
 #include "limits.h"
+#include "eprintable.h"
+#include "math.h"
 
 #ifndef LLONG_MAX
 #define LLONG_MAX 9223372036854775807LL
 #endif
 
-size_t Print::write(const char *str) {
+size_t EPrint::write(const char *str) {
     if (str == NULL) return 0;
-	return write((const uint8_t *)str, strlen(str));
+	return write((const uint8 *)str, strlen(str));
 }
 
-size_t Print::write(const void *buffer, uint32 size) {
+size_t EPrint::write(const void *buffer, uint32 size) {
 	size_t n = 0;
     uint8 *ch = (uint8*)buffer;
     while (size--) {
@@ -29,40 +29,40 @@ size_t Print::write(const void *buffer, uint32 size) {
 	return n;
 }
 
-size_t Print::print(uint8 b, int base) {
+size_t EPrint::print(uint8 b, int base) {
     return print((uint64)b, base);
 }
 
-size_t Print::print(const String &s)
+size_t EPrint::print(const EString &s)
 {
   return write(s.c_str(), s.length());
 }
 
-size_t Print::print(char c) {
+size_t EPrint::print(char c) {
     return write(c);
 }
 
-size_t Print::print(const char str[]) {
+size_t EPrint::print(const char str[]) {
     return write(str);
 }
 
-size_t Print::print(int n, int base) {
+size_t EPrint::print(int n, int base) {
     return print((long long)n, base);
 }
 
-size_t Print::print(unsigned int n, int base) {
+size_t EPrint::print(unsigned int n, int base) {
     return print((unsigned long long)n, base);
 }
 
-size_t Print::print(long n, int base) {
+size_t EPrint::print(long n, int base) {
     return print((long long)n, base);
 }
 
-size_t Print::print(unsigned long n, int base) {
+size_t EPrint::print(unsigned long n, int base) {
     return print((unsigned long long)n, base);
 }
 
-size_t Print::print(long long n, int base) {
+size_t EPrint::print(long long n, int base) {
     if (n < 0) {
         print('-');
         n = -n;
@@ -70,106 +70,106 @@ size_t Print::print(long long n, int base) {
     return printNumber(n, base);
 }
 
-size_t Print::print(unsigned long long n, int base) {
+size_t EPrint::print(unsigned long long n, int base) {
 	return printNumber(n, base);
 }
 
-size_t Print::print(double n, int digits) {
+size_t EPrint::print(double n, int digits) {
     return printFloat(n, digits);
 }
 
-size_t Print::print(const __FlashStringHelper *ifsh)
+size_t EPrint::print(const __FlashEStringHelper *ifsh)
 {
   return print(reinterpret_cast<const char *>(ifsh));
 }
 
-size_t Print::print(const Printable& x)
+size_t EPrint::print(const EPrintable& x)
 {
   return x.printTo(*this);
 }
 
-size_t Print::println(void) 
+size_t EPrint::println(void) 
 {
 	size_t n =  print('\r');
     n += print('\n');
 	return n;
 }
 
-size_t Print::println(const String &s)
+size_t EPrint::println(const EString &s)
 {
   size_t n = print(s);
   n += println();
   return n;
 }
 
-size_t Print::println(char c) {
+size_t EPrint::println(char c) {
     size_t n = print(c);
     n += println();
 	return n;
 }
 
-size_t Print::println(const char c[]) {
+size_t EPrint::println(const char c[]) {
     size_t n = print(c);
     n += println();
 	return n;
 }
 
-size_t Print::println(uint8 b, int base) {
+size_t EPrint::println(uint8 b, int base) {
     size_t n = print(b, base);
 	n += println();
 	return n;
 }
 
-size_t Print::println(int n, int base) {
+size_t EPrint::println(int n, int base) {
     size_t s = print(n, base);
     s += println();
 	return s;
 }
 
-size_t Print::println(unsigned int n, int base) {
+size_t EPrint::println(unsigned int n, int base) {
     size_t s = print(n, base);
     s += println();
 	return s;
 }
 
-size_t Print::println(long n, int base) {
+size_t EPrint::println(long n, int base) {
     size_t s = print((long long)n, base);
     s += println();
 	return s;
 }
 
-size_t Print::println(unsigned long n, int base) {
+size_t EPrint::println(unsigned long n, int base) {
     size_t s = print((unsigned long long)n, base);
     s += println();
 	return s;
 }
 
-size_t Print::println(long long n, int base) {
+size_t EPrint::println(long long n, int base) {
     size_t s = print(n, base);
     s += println();
 	return s;
 }
 
-size_t Print::println(unsigned long long n, int base) {
+size_t EPrint::println(unsigned long long n, int base) {
     size_t s = print(n, base);
     s += println();
 	return s;
 }
 
-size_t Print::println(double n, int digits) {
+size_t EPrint::println(double n, int digits) {
     size_t s = print(n, digits);
     s += println();
 	return s;
 }
 
-size_t Print::println(const __FlashStringHelper *ifsh)
+size_t EPrint::println(const __FlashEStringHelper *ifsh)
 {
   size_t n = print(ifsh);
   n += println();
   return n;
 }
 
-size_t Print::println(const Printable& x)
+size_t EPrint::println(const EPrintable& x)
 {
   size_t n = print(x);
   n += println();
@@ -180,7 +180,7 @@ size_t Print::println(const Printable& x)
  * Private methods
  */
 
-size_t Print::printNumber(unsigned long long n, uint8 base) {
+size_t EPrint::printNumber(unsigned long long n, uint8 base) {
     unsigned char buf[CHAR_BIT * sizeof(long long)];
     unsigned long i = 0;
 	size_t s=0;
@@ -211,7 +211,7 @@ size_t Print::printNumber(unsigned long long n, uint8 base) {
 #define LARGE_DOUBLE_TRESHOLD (9.1e18)
 
 /* THIS FUNCTION SHOULDN'T BE USED IF YOU NEED ACCURATE RESULTS. */
-size_t Print::printFloat(double number, uint8 digits) {
+size_t EPrint::printFloat(double number, uint8 digits) {
 size_t s=0;
     // Hackish fail-fast behavior for large-magnitude doubles
     if (abs(number) >= LARGE_DOUBLE_TRESHOLD) {
@@ -241,7 +241,7 @@ size_t s=0;
     double remainder = number - int_part;
     s+=print(int_part);
 
-    // Print the decimal point, but only if there are digits beyond
+    // EPrint the decimal point, but only if there are digits beyond
     if (digits > 0) {
         s+=print(".");
     }

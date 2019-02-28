@@ -7,24 +7,11 @@
 #ifndef ESERIAL_H
 #define ESERIAL_H
 
-#include "etypes.h"
-#include "eprint.h"
 #include "estream.h"
 #include "epio.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  
-#define ESERIAL_DATA_SIZE 64 
-  
-#ifdef __cplusplus
-}
-#endif
-
-
-// class ESerial: public Stream {
-class ESerial {
+template <Eml::Size SIZE=Eml::Size64>
+class ESerial: public EStream {
 public:
   enum DataBits { 
     Data5 = 0x00,
@@ -43,6 +30,7 @@ public:
     OneStop = 0x00,
     TwoStop = 0x08
   };
+    
   enum Event { TransmittedData, ReceivedData };
 
   ESerial(int uart, Pin tx, Pin rx);
@@ -60,11 +48,16 @@ public:
   StopBits stopBits() const;
   virtual int available(void);
   virtual int peek(void);
-  virtual byte read(void);
+  virtual int read(void);
   int availableForWrite(void);
+  // flush() - not use in interrupt
   virtual void flush(void);
-  virtual void write(byte);
-  // using Print::write;
+  virtual size_t write(byte ch);
+  inline size_t write(unsigned long n) { return write((byte)n); }
+  inline size_t write(long n) { return write((byte)n); }
+  inline size_t write(unsigned int n) { return write((byte)n); }
+  inline size_t write(int n) { return write((byte)n); }
+  using EPrint::write;
   void attachInterrupt(Event event, func_ptr handler);
   void detachInterrupt(Event event);
     
@@ -72,20 +65,17 @@ private:
   int _serialId;
   void *_serial_ptr;
   int _irq;
-  Pin _txPin;
-  Pin _rxPin;
   uint32 _baudRate;
   DataBits _dataBits;
   Parity _parity;
   StopBits _stopBits;
-  int dataRwCnt;
-  int dataTxCnt;
-  int dataTxSize;
-  int dataRxSize;
-  #pragma pack(push,1)
-  byte dataRx[ESERIAL_DATA_SIZE];
-  byte dataTx[ESERIAL_DATA_SIZE];
-  #pragma pack(pop)
+  struct {
+    Pin pin;
+    byte data[SIZE];
+    // ERingPrivateType memory allocation
+    byte ring[0x10];
+  } _rx, _tx;
+  
 };
 
 #endif // ESERIAL_H

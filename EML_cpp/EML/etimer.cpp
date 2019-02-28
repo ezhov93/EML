@@ -38,26 +38,22 @@ ETimer::ETimer(int timerId, Type type): _timerId(timerId), _type(type) {
     case 1: {
       _timer_ptr = MDR_TIMER1;
       _irq = Timer1_IRQn;
-      RST_CLK_PCLKcmd(RST_CLK_PCLK_TIMER1 ,ENABLE);
     }
     break;
     case 2: {
       _timer_ptr = MDR_TIMER2;
       _irq = Timer2_IRQn;
-      RST_CLK_PCLKcmd(RST_CLK_PCLK_TIMER2 ,ENABLE);
     }
     break;
     case 3: {
       _timer_ptr = MDR_TIMER3;
       _irq = Timer3_IRQn;
-      RST_CLK_PCLKcmd(RST_CLK_PCLK_TIMER3 ,ENABLE);
     }
     break;
     #if defined (USE_MDR1986VE1T) || defined (USE_MDR1986VE3)
     case 4: {
     _timer_ptr = MDR_TIMER4;
     _irq = Timer4_IRQn;
-    RST_CLK_PCLKcmd(RST_CLK_PCLK_TIMER4 ,ENABLE);
     }
     break;
     #endif
@@ -65,10 +61,12 @@ ETimer::ETimer(int timerId, Type type): _timerId(timerId), _type(type) {
       _timer_ptr = nullptr;
       return;
   }
-  MDR_TIMER_TypeDef* timer = (MDR_TIMER_TypeDef*)_timer_ptr;
+  MDR_TIMER_TypeDef *timer = (MDR_TIMER_TypeDef*)_timer_ptr;
+  RST_CLK_PCLKcmd(PCLK_BIT(_timer_ptr) ,ENABLE);
+  TIMER_DeInit(timer);
   
-  _interval = &timer->ARR;
-  *_interval = 1000;
+  _interval_ptr = &timer->ARR;
+  *_interval_ptr = 1000;
   _singleShot = false;
   _div = TIMER_HCLKdiv8;
   _rate = 1;
@@ -76,26 +74,10 @@ ETimer::ETimer(int timerId, Type type): _timerId(timerId), _type(type) {
   for(int rate=0; rate<_div; ++rate)
     _rate*=2;
   
-  TIMER_CntInitTypeDef timerInit;
-  TIMER_DeInit(timer);
-  
-  timerInit.TIMER_Prescaler                = SystemCoreClock/_type-1;
-  timerInit.TIMER_Period                   = 0;
-  timerInit.TIMER_CounterMode              = TIMER_CntMode_ClkFixedDir;
-  timerInit.TIMER_CounterDirection         = TIMER_CntDir_Up;
-  timerInit.TIMER_EventSource              = TIMER_EvSrc_None;
-  timerInit.TIMER_FilterSampling           = TIMER_FDTS_TIMER_CLK_div_1;
-  timerInit.TIMER_ARR_UpdateMode           = TIMER_ARR_Update_Immediately;
-  timerInit.TIMER_ETR_FilterConf           = TIMER_Filter_1FF_at_TIMER_CLK;
-  timerInit.TIMER_ETR_Prescaler            = TIMER_ETR_Prescaler_None;
-  timerInit.TIMER_ETR_Polarity             = TIMER_ETRPolarity_NonInverted;
-  timerInit.TIMER_BRK_Polarity             = TIMER_BRKPolarity_NonInverted;
-  TIMER_CntInit (timer,&timerInit);
-  TIMER_BRGInit(timer,_div);  
 }
 
 inline int ETimer::interval() const {
-  return *_interval;
+  return *_interval_ptr;
 }
 
 bool ETimer::isActive() const {
@@ -113,19 +95,38 @@ void ETimer::setSingleShot(bool singleShot) {
 
 void ETimer::setInterval(int time) {
   MDR_TIMER_TypeDef* timer = (MDR_TIMER_TypeDef*)_timer_ptr;
-  *_interval = time;
+  *_interval_ptr = time;
   TIMER_SetCounter(timer, 0);
   TIMER_SetCntAutoreload(timer, time);
 }
 
 void ETimer::start() {
-  start(*_interval);
+  start(*_interval_ptr);
 }
 
 void ETimer::start(int time) {
   MDR_TIMER_TypeDef* timer = (MDR_TIMER_TypeDef*)_timer_ptr;
-  setInterval(time);
-  TIMER_SetCntPrescaler(timer, SystemCoreClock/(_type*_rate)-1);
+  
+  TIMER_CntInitTypeDef timerInit;
+  
+  *_interval_ptr = time;
+  
+  timerInit.TIMER_Prescaler                = SystemCoreClock/(_type*_rate)-1;
+  timerInit.TIMER_Period                   = *_interval_ptr;
+  timerInit.TIMER_CounterMode              = TIMER_CntMode_ClkFixedDir;
+  timerInit.TIMER_CounterDirection         = TIMER_CntDir_Up;
+  timerInit.TIMER_EventSource              = TIMER_EvSrc_None;
+  timerInit.TIMER_FilterSampling           = TIMER_FDTS_TIMER_CLK_div_1;
+  timerInit.TIMER_ARR_UpdateMode           = TIMER_ARR_Update_Immediately;
+  timerInit.TIMER_ETR_FilterConf           = TIMER_Filter_1FF_at_TIMER_CLK;
+  timerInit.TIMER_ETR_Prescaler            = TIMER_ETR_Prescaler_None;
+  timerInit.TIMER_ETR_Polarity             = TIMER_ETRPolarity_NonInverted;
+  timerInit.TIMER_BRK_Polarity             = TIMER_BRKPolarity_NonInverted;
+  
+  TIMER_CntInit (timer,&timerInit);
+  TIMER_SetCounter(timer, 0);
+  TIMER_BRGInit(timer,_div); 
+  
   TIMER_Cmd(timer, ENABLE);
 }
 
@@ -141,7 +142,7 @@ inline void ETimer::resume(void) {
 
 int ETimer::remaningTime() const{
   MDR_TIMER_TypeDef* timer = (MDR_TIMER_TypeDef*)_timer_ptr;
-  return *_interval - timer->CNT;
+  return *_interval_ptr - timer->CNT;
 }
 // void attachInterrupt(int channel, func_ptr handler);
 // void detachInterrupt(int channel); 

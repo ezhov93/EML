@@ -312,7 +312,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -324,7 +324,7 @@
             <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
             <uGnu>1</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
@@ -528,14 +528,49 @@
               <FilePath>.\EML\eserial.h</FilePath>
             </File>
             <File>
-              <FileName>eringbuffer.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>.\EML\eringbuffer.cpp</FilePath>
+              <FileName>ering.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EML\ering.h</FilePath>
             </File>
             <File>
-              <FileName>eringbuffer.h</FileName>
+              <FileName>ering_private.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\EML\ering_private.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>ering_private.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\EML\eringbuffer.h</FilePath>
+              <FilePath>.\EML\ering_private.h</FilePath>
+            </File>
+            <File>
+              <FileName>estream.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\EML\estream.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>estream.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EML\estream.h</FilePath>
+            </File>
+            <File>
+              <FileName>eprint.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\EML\eprint.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>eprint.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EML\eprint.h</FilePath>
+            </File>
+            <File>
+              <FileName>estring.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\EML\estring.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>estring.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EML\estring.h</FilePath>
             </File>
           </Files>
         </Group>

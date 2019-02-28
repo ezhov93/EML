@@ -35,7 +35,7 @@ class ETimer {
     void *_timer_ptr;
     func_ptr _handler;
     Type _type;
-    __IO uint32 *_interval;
+    __IO uint32 *_interval_ptr;
     bool _singleShot;
     int _irq;
     int _div;

@@ -1,12 +1,12 @@
 
-#ifndef Stream_h
-#define Stream_h
+#ifndef ESTREAM_H
+#define ESTREAM_H
 
 #include <inttypes.h>
 #include "eprint.h"
 
 
-class Stream : public Print
+class EStream : public EPrint
 {
   protected:
     unsigned long _timeout;      // number of milliseconds to wait for the next char before aborting timed read
@@ -16,12 +16,11 @@ class Stream : public Print
     int peekNextDigit(); // returns the next numeric digit in the stream or -1 if timeout
 
   public:
+    EStream() {_timeout=1000;}
     virtual int available() = 0;
     virtual int read() = 0;
     virtual int peek() = 0;
     virtual void flush() = 0;
-
-    Stream() {_timeout=1000;}
 
 // parsing methods
 
@@ -62,8 +61,8 @@ class Stream : public Print
   // returns the number of characters placed in the buffer (0 means no valid data found)
 
   // Arduino String functions to be added here
-  String readString();
-  String readStringUntil(char terminator);
+  EString readString();
+  EString readStringUntil(char terminator);
 
   protected:
   long parseInt(char skipChar); // as above but the given skipChar is ignored
@@ -83,4 +82,4 @@ class Stream : public Print
   int findMulti(struct MultiTarget *targets, int tCount);
 };
 
-#endif
+#endif // ESTREAM_H

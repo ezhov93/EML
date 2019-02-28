@@ -7,9 +7,9 @@
 #include "etime.h"
 #include "MDR32F9Qx_config.h"           // Keil::Device:Startup
 
-static uint32 msec = 0;
+__IO static uint32 msec = 0;
 
-inline uint32 millis() {
+uint32 millis() {
 	return msec;
 }
 
@@ -42,4 +42,4 @@ void SysTick_Handler() {
 #endif
 
 
-  
+

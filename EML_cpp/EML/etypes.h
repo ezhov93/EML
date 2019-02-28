@@ -12,6 +12,42 @@ typedef enum {false, true=!false } bool;
 #endif
 
 #ifdef __cplusplus
+#define EML_ADD_TEMPLATE_SIZE(name) template class name<Eml::Size1>;    \
+                                    template class name<Eml::Size2>;    \
+                                    template class name<Eml::Size4>;    \
+                                    template class name<Eml::Size8>;    \
+                                    template class name<Eml::Size16>;   \
+                                    template class name<Eml::Size32>;   \
+                                    template class name<Eml::Size64>;   \
+                                    template class name<Eml::Size128>;  \
+                                    template class name<Eml::Size256>;  \
+                                    template class name<Eml::Size512>;  \
+                                    template class name<Eml::Size1024>; \
+                                    template class name<Eml::Size2048>; \
+                                    template class name<Eml::Size4096>; \
+                                    template class name<Eml::Size8192>; \
+                                    
+namespace Eml {
+  typedef enum  {
+    Size1    =   1,
+    Size2    =   2,
+    Size4    =   4,
+    Size8    =   8,
+    Size16   =  16,
+    Size32   =  32,
+    Size64   =  64,
+    Size128  = 128,
+    Size256  = 256,
+    Size512  = 512,
+    Size1024 = 1024,
+    Size2048 = 2048,
+    Size4096 = 4096,
+    Size8192 = 8192
+  } Size;
+}
+#endif
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 typedef unsigned char uint8;
