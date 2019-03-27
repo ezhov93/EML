@@ -12,6 +12,7 @@
 #include "epio_private.h"
 #include "ering_private.h"
 
+
 #define DMA 1
 
 #if !DMA
@@ -56,7 +57,8 @@ static __attribute__(( constructor (101))) void initialize() {
 
 #undef NUMBER_OF_UART
 
-ESerial::ESerial(int uart, Pin tx, Pin rx, int size) {
+template <Eml::Size SIZE>
+ESerial<SIZE>::ESerial(int uart, Pin tx, Pin rx)  {
   switch (_serialId = uart) {
     case 1: {
       _serial_ptr = MDR_UART1;
@@ -73,21 +75,17 @@ ESerial::ESerial(int uart, Pin tx, Pin rx, int size) {
       return;
   }
   
-  _rx.data = new byte[size];
-  _rx.ring = new byte[sizeof (ERingPrivate)];
   ERingPrivate *ringRx = (ERingPrivate*)&_rx.ring;  
   ringRx->data = _rx.data;
-  ringRx->size = size;
+  ringRx->size = SIZE;
   ERingPrivate::clear(*ringRx);
 
-  _tx.data = new byte[size];
-  _tx.ring = new byte[sizeof (ERingPrivate)];
   ERingPrivate *ringTx = (ERingPrivate*)&_tx.ring;  
   ringTx->data = _tx.data;
-  ringTx->size = size;
+  ringTx->size = SIZE;
   ERingPrivate::clear(*ringTx);
   
-  gUart[_serialId-1].size = size;
+  gUart[_serialId-1].size = SIZE;
   gUart[_serialId-1].ringRx_ptr = ringRx;
   gUart[_serialId-1].ringTx_ptr = ringTx;
   
@@ -100,19 +98,13 @@ ESerial::ESerial(int uart, Pin tx, Pin rx, int size) {
   _parity = NoParity;
 }
 
-ESerial::~ESerial() {
-  delete _rx.data;
-  delete _rx.ring;
-  
-  delete _tx.data;
-  delete _tx.ring;
-}
-
-void ESerial::begin() {
+template <Eml::Size SIZE>
+void ESerial<SIZE>::begin() {
 	begin(_baudRate);
 }
 
-void ESerial::begin(uint32 baudrate) {
+template <Eml::Size SIZE>
+void ESerial<SIZE>::begin(uint32 baudrate) {
   PORT_InitTypeDef port;
   MDR_UART_TypeDef *serial = (MDR_UART_TypeDef*)_serial_ptr;
 
@@ -170,68 +162,87 @@ void ESerial::begin(uint32 baudrate) {
   
 }
 
-void ESerial::end(void) {
+template <Eml::Size SIZE>
+void ESerial<SIZE>::end(void) {
   MDR_UART_TypeDef *serial = (MDR_UART_TypeDef*)_serial_ptr;
   UART_Cmd(serial,DISABLE);
 }
 
-inline void ESerial::setBaudRate(int baudrate) {
+template <Eml::Size SIZE>
+inline void ESerial<SIZE>::setBaudRate(int baudrate) {
     _baudRate = baudrate;
 }
 
-inline int ESerial::baudrate() const {
+template <Eml::Size SIZE>
+inline int ESerial<SIZE>::baudrate() const {
   return _baudRate;
 }
 
-inline void ESerial::setDataBits (DataBits dataBits) {
+template <Eml::Size SIZE>
+inline void ESerial<SIZE>::setDataBits (DataBits dataBits) {
   _dataBits = dataBits;
 }
 
-inline void ESerial::setParity (Parity parity) {
+template <Eml::Size SIZE>
+inline void ESerial<SIZE>::setParity (Parity parity) {
   _parity = parity;
 }
 
-inline void ESerial::setStopBits (StopBits stopBits) {
+template <Eml::Size SIZE>
+inline void ESerial<SIZE>::setEvent (Event event) {
+  
+}
+
+template <Eml::Size SIZE>
+inline void ESerial<SIZE>::setStopBits (StopBits stopBits) {
   _stopBits = stopBits;
 }
 
-inline ESerial::DataBits ESerial::dataBits() const {
+template <Eml::Size SIZE>
+inline ESerial<SIZE>::DataBits ESerial<SIZE>::dataBits() const {
   return _dataBits;
 }
 
-inline ESerial::Parity ESerial::parity() const {
+template <Eml::Size SIZE>
+inline ESerial<SIZE>::Parity ESerial<SIZE>::parity() const {
   return _parity;
 }
 
-inline ESerial::StopBits ESerial::stopBits() const {
+template <Eml::Size SIZE>
+inline ESerial<SIZE>::StopBits ESerial<SIZE>::stopBits() const {
   return _stopBits;
 }
 
-int ESerial::read(void) {
+template <Eml::Size SIZE>
+int ESerial<SIZE>::read(void) {
   byte ch;
   ERingPrivate *ringRx = (ERingPrivate*)&_rx.ring;  
   ERingPrivate::pop(*ringRx, &ch, sizeof(ch));
   return ch;
 }
 
-int ESerial::available(void) {
+template <Eml::Size SIZE>
+int ESerial<SIZE>::available(void) {
    ERingPrivate *ringRx = (ERingPrivate*)&_rx.ring;  
    return ERingPrivate::count(*ringRx);
 }
 
-int ESerial::peek(void) {
+template <Eml::Size SIZE>
+int ESerial<SIZE>::peek(void) {
   byte ch;
   ERingPrivate *ringRx = (ERingPrivate*)&_rx.ring;  
   ERingPrivate::peek(*ringRx, &ch, sizeof(ch));
   return ch;
 }
 
-int ESerial::availableForWrite(void) {
+template <Eml::Size SIZE>
+int ESerial<SIZE>::availableForWrite(void) {
    ERingPrivate *ringRx = (ERingPrivate*)&_rx.ring;  
    return ERingPrivate::count(*ringRx);
 }
 
-size_t ESerial::write(byte ch) {
+template <Eml::Size SIZE>
+size_t ESerial<SIZE>::write(byte ch) {
   MDR_UART_TypeDef *serial = (MDR_UART_TypeDef*)_serial_ptr;
   ERingPrivate *ringTx = (ERingPrivate*)&_tx.ring;  
   ERingPrivate::push(*ringTx, &ch, 1);
@@ -243,14 +254,16 @@ size_t ESerial::write(byte ch) {
   return 1;
 }
 
-void ESerial::flush(void) {
+template <Eml::Size SIZE>
+void ESerial<SIZE>::flush(void) {
   MDR_UART_TypeDef *serial = (MDR_UART_TypeDef*)_serial_ptr;
   ERingPrivate *ringTx = (ERingPrivate*)&_tx.ring;  
   while(!ERingPrivate::isEmpty(*ringTx)); // wait for TX buffer empty
   while(!UART_GetFlagStatus(serial, UART_FLAG_TXFE)); // wait for Transmite*/
 }
 
-void ESerial::attachInterrupt(Event event, func_ptr handler) {
+template <Eml::Size SIZE>
+void ESerial<SIZE>::attachInterrupt(Event event, func_ptr handler) {
   switch (event) {
     case TransmittedData: {
      gUart[_serialId-1].handlers.trm = handler;
@@ -265,7 +278,8 @@ void ESerial::attachInterrupt(Event event, func_ptr handler) {
   }
 }
 
-void ESerial::detachInterrupt(Event event) {
+template <Eml::Size SIZE>
+void ESerial<SIZE>::detachInterrupt(Event event) {
   switch (event) {
     case TransmittedData: {
       gUart[_serialId-1].handlers.trm = NULL;
@@ -338,5 +352,7 @@ void UART2_IRQHandler() {
 #ifdef __cplusplus
 }
 #endif
+
+EML_ADD_TEMPLATE_SIZE(ESerial)
 
 

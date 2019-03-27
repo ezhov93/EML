@@ -10,6 +10,7 @@
 #include "estream.h"
 #include "epio.h"
 
+template <Eml::Size SIZE=Eml::Size64>
 class ESerial: public EStream {
 public:
   enum DataBits { 
@@ -29,10 +30,10 @@ public:
     OneStop = 0x00,
     TwoStop = 0x08
   };
+    
   enum Event { TransmittedData, ReceivedData };
 
-  ESerial(int uart, Pin tx, Pin rx, int size=64);
-  ~ESerial();
+  ESerial(int uart, Pin tx, Pin rx);
   void begin();
   void begin(uint32 baudrate);
   void end();
@@ -40,6 +41,7 @@ public:
   int baudrate() const;
   void setDataBits (DataBits dataBits);
   void setParity (Parity patity);
+  void setEvent (Event event);
   void setStopBits (StopBits stopBits);
   DataBits dataBits() const;
   Parity parity() const;
@@ -68,10 +70,10 @@ private:
   Parity _parity;
   StopBits _stopBits;
   struct {
-    int size;
     Pin pin;
-    byte *data;
-    byte *ring;
+    byte data[SIZE];
+    // ERingPrivateType memory allocation
+    byte ring[0x10];
   } _rx, _tx;
   
 };

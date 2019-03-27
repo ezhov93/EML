@@ -10,52 +10,58 @@
 #include "etypes.h"
 #include "ering_private.h"
  
-template <typename T=byte, int SIZE=64> 
+template <typename T=byte> 
 class ERing {
 public:
-  ERing() {
-    ring.data = data;
-    ring.size = SIZE;
-    ERingPrivate::clear(ring);
+  ERing(int size) {
+    _ring.data = data;
+    _ring.size = size;
+    data = new data[size];
+    EPrivate::ERingPrivate::clear(_ring);
   }
+  
+  ~ERing() {
+    delete[] data;
+  }
+  
   bool isFull() {
-   return ERingPrivate::isFull(ring);
+   return EPrivate::ERingPrivate::isFull(_ring);
   }
   
   bool isEmpty() {
-    return ERingPrivate::isEmpty(ring);
+    return EPrivate::ERingPrivate::isEmpty(_ring);
   }
   
   void push(T data) {
-    ERingPrivate::push(ring, (void*)data, sizeof(T));
+    EPrivate::ERingPrivate::push(_ring, (void*)data, sizeof(T));
   }
   
   void push(T &data, int size) {
-    ERingPrivate::push(ring, data, sizeof(T)*size);
+    EPrivate::ERingPrivate::push(_ring, data, sizeof(T)*size);
   }
   
   T pop() {
     T data;
-    ERingPrivate::pop(ring, data, sizeof(T));
+    EPrivate::ERingPrivate::pop(_ring, data, sizeof(T));
     return data;
   }
   
   void pop(T &data, int size) {
-    ERingPrivate::pop(ring, data, sizeof(T)*size);
+    EPrivate::ERingPrivate::pop(_ring, data, sizeof(T)*size);
   }
   
   T peek() {
     T data;
-    ERingPrivate::peek(ring, data, sizeof(T));
+    EPrivate::ERingPrivate::peek(_ring, data, sizeof(T));
     return data;
   }
   
   void peek(T &data, int size) {
-    ERingPrivate::peek(ring, data, sizeof(T)*size);
+    EPrivate::ERingPrivate::peek(_ring, data, sizeof(T)*size);
   }
   
   void clear() { 
-    ERingPrivate::clear(ring);
+    EPrivate::ERingPrivate::clear(_ring);
   }
   
   int size() const {
@@ -63,7 +69,7 @@ public:
   }
   
   int count() {
-    return ERingPrivate::count(ring);
+    return EPrivate::ERingPrivate::count(_ring);
   }
   
   void *data_ptr() const {
@@ -71,10 +77,9 @@ public:
   }
 
 private:
-  ERingPrivateType ring;
-#pragma pack(push,1)
-  byte data[SIZE];
-#pragma pack(pop)
+  EPrivate::ERingPrivate _ring;
+  byte *_data;
+  int _size;
 };
 
 
