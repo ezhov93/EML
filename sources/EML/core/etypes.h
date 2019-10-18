@@ -8,7 +8,7 @@
 #define ETYPES_H
 
 #ifndef __cplusplus
-typedef enum {false, true=!false } bool;
+typedef enum { false, true = !false } bool;
 #endif
 /*
 #ifdef __cplusplus
@@ -27,6 +27,7 @@ typedef enum {false, true=!false } bool;
                                     template class name<Eml::Size4096>; \
                                     template class name<Eml::Size8192>; \
                                     
+
 namespace Eml {
   typedef enum  {
     Size1    =   1,
@@ -61,14 +62,14 @@ typedef short int16;
 typedef int int32;
 typedef long long int64;
 
-typedef uint8  byte;
+typedef uint8 byte;
 typedef uint16 word;
 typedef uint32 dword;
 
 /* custom type */
 typedef float real;
 typedef bool boolean;
-typedef enum { FALSE,TRUE } BOOL;
+typedef enum { FALSE, TRUE } BOOL;
 typedef enum { LSBFIRST, MSBFIRST } BitOrder;
 
 typedef void (*func_ptr)(void);
@@ -76,7 +77,7 @@ typedef void (*argFunc_ptr)(void *);
 typedef bool (*signal_ptr)(void);
 
 #define __IO volatile
-#define __attr_flash __attribute__((section (".USER_FLASH")))
+#define __attr_flash __attribute__((section(".USER_FLASH")))
 #ifndef __packed
 #define __packed __attribute__((__packed__))
 #endif
@@ -94,7 +95,7 @@ typedef bool (*signal_ptr)(void);
 #endif
 
 #if (__ARMCOMPILER_VERSION < 6000000)
-#define nullptr (void*)NULL;
+#define nullptr(void *) NULL;
 #endif
 
 #define null NULL
@@ -103,4 +104,4 @@ typedef bool (*signal_ptr)(void);
 }
 #endif
 
-#endif // ETYPES_H
+#endif  // ETYPES_H

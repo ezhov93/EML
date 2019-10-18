@@ -1,14 +1,14 @@
 /*
- * @file   ecore.c
+ * @file   eoverclock.c
  * @author Mikhail Ezhov <ezhov93@gmail.com>
- * @brief  Main include file.
+ * @brief  Overclock include file.
  */
 
 #include "ecore.h"
 #include "MDR32F9Qx_config.h"
 #include "MDR32F9Qx_rst_clk.h"
 
-void setCoreClock(float mhz) {
+void overclock(float mhz) {
   uint32 mull = (mhz * 1000000) / HSE_Value;
   RST_CLK_PCLKcmd(RST_CLK_PCLK_RST_CLK, ENABLE);
   RST_CLK_HSEconfig(RST_CLK_HSE_ON);
@@ -25,6 +25,3 @@ void setCoreClock(float mhz) {
   SysTick_Config(SystemCoreClock / 1000);
 }
 
-float coreClock() { return SystemCoreClock / 1e6f; }
-
-void restart() { NVIC_SystemReset(); }

@@ -5,7 +5,7 @@
  */
 
 #include <stdlib.h>
-#if  (__ARMCC_VERSION	 < 6000000)
+#if (__ARMCC_VERSION < 6000000)
 void *operator new(size_t size);
 void *operator new[](size_t size);
 void operator delete(void *ptr);

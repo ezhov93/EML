@@ -29,7 +29,6 @@
 #define MAP(value, fromStart, fromEnd, toStart, toEnd) \
   (((value - fromStart) * (toEnd - toStart)) / (fromEnd - fromStart) + toStart)
 
-
 void randomSeed(unsigned int seed);
 long random(long max);
 long random(long min, long max);

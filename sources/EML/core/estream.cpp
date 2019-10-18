@@ -4,40 +4,37 @@
  * @brief  Adds parsing methods to stream class.
  */
 
-#include "etime.h"
 #include "estream.h"
+#include "etime.h"
 
 #define PARSE_TIMEOUT 1000  // default number of milli-seconds to wait
-#define NO_SKIP_CHAR  1  // a magic char not found in a valid ASCII numeric field
+#define NO_SKIP_CHAR 1  // a magic char not found in a valid ASCII numeric field
 
 // private method to read stream with timeout
-int EStream::timedRead()
-{
+int EStream::timedRead() {
   int c;
   _startMillis = millis();
   do {
     c = read();
     if (c >= 0) return c;
-  } while(millis() - _startMillis < _timeout);
-  return -1;     // -1 indicates timeout
+  } while (millis() - _startMillis < _timeout);
+  return -1;  // -1 indicates timeout
 }
 
 // private method to peek stream with timeout
-int EStream::timedPeek()
-{
+int EStream::timedPeek() {
   int c;
   _startMillis = millis();
   do {
     c = peek();
     if (c >= 0) return c;
-  } while(millis() - _startMillis < _timeout);
-  return -1;     // -1 indicates timeout
+  } while (millis() - _startMillis < _timeout);
+  return -1;  // -1 indicates timeout
 }
 
 // returns peek of the next digit in the stream or -1 if timeout
 // discards non-numeric characters
-int EStream::peekNextDigit()
-{
+int EStream::peekNextDigit() {
   int c;
   while (1) {
     c = timedPeek();
@@ -51,112 +48,99 @@ int EStream::peekNextDigit()
 // Public Methods
 //////////////////////////////////////////////////////////////
 
-void EStream::setTimeout(unsigned long timeout)  // sets the maximum number of milliseconds to wait
+void EStream::setTimeout(
+    unsigned long timeout)  // sets the maximum number of milliseconds to wait
 {
   _timeout = timeout;
 }
 
- // find returns true if the target string is found
-bool  EStream::find(char *target)
-{
-  return findUntil(target, (char*)"");
-}
+// find returns true if the target string is found
+bool EStream::find(char *target) { return findUntil(target, (char *)""); }
 
 // reads data from the stream until the target string of given length is found
 // returns true if target string is found, false if timed out
-bool EStream::find(char *target, size_t length)
-{
+bool EStream::find(char *target, size_t length) {
   return findUntil(target, length, NULL, 0);
 }
 
 // as find but search ends if the terminator string is found
-bool  EStream::findUntil(char *target, char *terminator)
-{
+bool EStream::findUntil(char *target, char *terminator) {
   return findUntil(target, strlen(target), terminator, strlen(terminator));
 }
 
-// reads data from the stream until the target string of the given length is found
-// search terminated if the terminator string is found
-// returns true if target string is found, false if terminated or timed out
-bool EStream::findUntil(char *target, size_t targetLen, char *terminator, size_t termLen)
-{
+// reads data from the stream until the target string of the given length is
+// found search terminated if the terminator string is found returns true if
+// target string is found, false if terminated or timed out
+bool EStream::findUntil(char *target, size_t targetLen, char *terminator,
+                        size_t termLen) {
   size_t index = 0;  // maximum target string length is 64k bytes!
   size_t termIndex = 0;
   int c;
-  
-  if( *target == 0)
-    return true;   // return true if target is a null string
-  while( (c = timedRead()) > 0){
-    
-    if(c != target[index])
-      index = 0; // reset index if any char does not match
-    
-    if( c == target[index]){
-      //////Serial.print("found "); Serial.write(c); Serial.print("index now"); Serial.println(index+1);
-      if(++index >= targetLen){ // return true if all chars in the target match
+
+  if (*target == 0) return true;  // return true if target is a null string
+  while ((c = timedRead()) > 0) {
+    if (c != target[index])
+      index = 0;  // reset index if any char does not match
+
+    if (c == target[index]) {
+      //////Serial.print("found "); Serial.write(c); Serial.print("index now");
+      ///Serial.println(index+1);
+      if (++index >=
+          targetLen) {  // return true if all chars in the target match
         return true;
       }
     }
-    
-    if(termLen > 0 && c == terminator[termIndex]){
-      if(++termIndex >= termLen)
-        return false;       // return false if terminate string found before target string
-    }
-    else
+
+    if (termLen > 0 && c == terminator[termIndex]) {
+      if (++termIndex >= termLen)
+        return false;  // return false if terminate string found before target
+                       // string
+    } else
       termIndex = 0;
   }
   return false;
 }
 
-
 // returns the first valid (long) integer value from the current position.
 // initial characters that are not digits (or the minus sign) are skipped
 // function is terminated by the first character that is not a digit.
-long EStream::parseInt()
-{
-  return parseInt(NO_SKIP_CHAR); // terminate on first non-digit character (or timeout)
+long EStream::parseInt() {
+  return parseInt(
+      NO_SKIP_CHAR);  // terminate on first non-digit character (or timeout)
 }
 
 // as above but a given skipChar is ignored
 // this allows format characters (typically commas) in values to be ignored
-long EStream::parseInt(char skipChar)
-{
+long EStream::parseInt(char skipChar) {
   boolean isNegative = false;
   long value = 0;
   int c;
 
   c = peekNextDigit();
   // ignore non numeric leading characters
-  if(c < 0)
-    return 0; // zero returned if timeout
+  if (c < 0) return 0;  // zero returned if timeout
 
-  do{
-    if(c == skipChar)
-      ; // ignore this charactor
-    else if(c == '-')
+  do {
+    if (c == skipChar)
+      ;  // ignore this charactor
+    else if (c == '-')
       isNegative = true;
-    else if(c >= '0' && c <= '9')        // is c a digit?
+    else if (c >= '0' && c <= '9')  // is c a digit?
       value = value * 10 + c - '0';
     read();  // consume the character we got with peek
     c = timedPeek();
-  }
-  while( (c >= '0' && c <= '9') || c == skipChar );
+  } while ((c >= '0' && c <= '9') || c == skipChar);
 
-  if(isNegative)
-    value = -value;
+  if (isNegative) value = -value;
   return value;
 }
 
-
 // as parseInt but returns a floating point value
-float EStream::parseFloat()
-{
-  return parseFloat(NO_SKIP_CHAR);
-}
+float EStream::parseFloat() { return parseFloat(NO_SKIP_CHAR); }
 
 // as above but the given skipChar is ignored
 // this allows format characters (typically commas) in values to be ignored
-float EStream::parseFloat(char skipChar){
+float EStream::parseFloat(char skipChar) {
   boolean isNegative = false;
   boolean isFraction = false;
   long value = 0;
@@ -164,30 +148,26 @@ float EStream::parseFloat(char skipChar){
   float fraction = 1.0;
 
   c = peekNextDigit();
-    // ignore non numeric leading characters
-  if(c < 0)
-    return 0; // zero returned if timeout
+  // ignore non numeric leading characters
+  if (c < 0) return 0;  // zero returned if timeout
 
-  do{
-    if(c == skipChar)
-      ; // ignore
-    else if(c == '-')
+  do {
+    if (c == skipChar)
+      ;  // ignore
+    else if (c == '-')
       isNegative = true;
     else if (c == '.')
       isFraction = true;
-    else if(c >= '0' && c <= '9')  {      // is c a digit?
+    else if (c >= '0' && c <= '9') {  // is c a digit?
       value = value * 10 + c - '0';
-      if(isFraction)
-         fraction *= 0.1;
+      if (isFraction) fraction *= 0.1;
     }
     read();  // consume the character we got with peek
     c = timedPeek();
-  }
-  while( (c >= '0' && c <= '9')  || c == '.' || c == skipChar );
+  } while ((c >= '0' && c <= '9') || c == '.' || c == skipChar);
 
-  if(isNegative)
-    value = -value;
-  if(isFraction)
+  if (isNegative) value = -value;
+  if (isFraction)
     return value * fraction;
   else
     return value;
@@ -198,8 +178,7 @@ float EStream::parseFloat(char skipChar){
 // returns the number of characters placed in the buffer
 // the buffer is NOT null terminated.
 //
-size_t EStream::readBytes(char *buffer, size_t length)
-{
+size_t EStream::readBytes(char *buffer, size_t length) {
   size_t count = 0;
   while (count < length) {
     int c = timedRead();
@@ -210,13 +189,12 @@ size_t EStream::readBytes(char *buffer, size_t length)
   return count;
 }
 
-
 // as readBytes with terminator character
-// terminates if length characters have been read, timeout, or if the terminator character  detected
-// returns the number of characters placed in the buffer (0 means no valid data found)
+// terminates if length characters have been read, timeout, or if the terminator
+// character  detected returns the number of characters placed in the buffer (0
+// means no valid data found)
 
-size_t EStream::readBytesUntil(char terminator, char *buffer, size_t length)
-{
+size_t EStream::readBytesUntil(char terminator, char *buffer, size_t length) {
   if (length < 1) return 0;
   size_t index = 0;
   while (index < length) {
@@ -225,48 +203,41 @@ size_t EStream::readBytesUntil(char terminator, char *buffer, size_t length)
     *buffer++ = (char)c;
     index++;
   }
-  return index; // return number of characters, not including null terminator
+  return index;  // return number of characters, not including null terminator
 }
 
-EString EStream::readString()
-{
+EString EStream::readString() {
   EString ret;
   int c = timedRead();
-  while (c >= 0)
-  {
+  while (c >= 0) {
     ret += (char)c;
     c = timedRead();
   }
   return ret;
 }
 
-EString EStream::readStringUntil(char terminator)
-{
+EString EStream::readStringUntil(char terminator) {
   EString ret;
   int c = timedRead();
-  while (c >= 0 && c != terminator)
-  {
+  while (c >= 0 && c != terminator) {
     ret += (char)c;
     c = timedRead();
   }
   return ret;
 }
 
-
-int EStream::findMulti( struct EStream::MultiTarget *targets, int tCount) {
+int EStream::findMulti(struct EStream::MultiTarget *targets, int tCount) {
   // any zero length target string automatically matches and would make
   // a mess of the rest of the algorithm.
-  for (struct MultiTarget *t = targets; t < targets+tCount; ++t) {
-    if (t->len <= 0)
-      return t - targets;
+  for (struct MultiTarget *t = targets; t < targets + tCount; ++t) {
+    if (t->len <= 0) return t - targets;
   }
 
   while (1) {
     int c = timedRead();
-    if (c < 0)
-      return -1;
+    if (c < 0) return -1;
 
-    for (struct MultiTarget *t = targets; t < targets+tCount; ++t) {
+    for (struct MultiTarget *t = targets; t < targets + tCount; ++t) {
       // the simple case is if we match, deal with that first.
       if (c == t->str[t->index]) {
         if (++t->index == t->len)
@@ -277,17 +248,15 @@ int EStream::findMulti( struct EStream::MultiTarget *targets, int tCount) {
 
       // if not we need to walk back and see if we could have matched further
       // down the stream (ie '1112' doesn't match the first position in '11112'
-      // but it will match the second position so we can't just reset the current
-      // index to 0 when we find a mismatch.
-      if (t->index == 0)
-        continue;
+      // but it will match the second position so we can't just reset the
+      // current index to 0 when we find a mismatch.
+      if (t->index == 0) continue;
 
       int origIndex = t->index;
       do {
         --t->index;
         // first check if current char works against the new current index
-        if (c != t->str[t->index])
-          continue;
+        if (c != t->str[t->index]) continue;
 
         // if it's the only char then we're good, nothing more to check
         if (t->index == 0) {
@@ -299,8 +268,7 @@ int EStream::findMulti( struct EStream::MultiTarget *targets, int tCount) {
         int diff = origIndex - t->index;
         size_t i;
         for (i = 0; i < t->index; ++i) {
-          if (t->str[i] != t->str[i + diff])
-            break;
+          if (t->str[i] != t->str[i + diff]) break;
         }
 
         // if we successfully got through the previous loop then our current
