@@ -118,7 +118,7 @@ EString EConsole::scan() {
 
 void EConsole::scan(const char *str) {
   int c = read();
-  char *ptr = const_cast<char*>(str);
+  char *ptr = const_cast<char *>(str);
   while (true) {
     if (c >= 0) {
       char ch = (char)c;
